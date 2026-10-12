@@ -16,6 +16,7 @@ export interface WaitlistFormData {
   serviceModels: string[]
   serviceModelOther: string
   willingnessToPay: string
+  willingnessToPayOther: string
   missingFeatures: string
   generalFeedback: string
   website: string

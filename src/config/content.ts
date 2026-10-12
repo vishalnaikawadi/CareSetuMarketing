@@ -23,7 +23,7 @@ export const features = [
   {
     title: 'Longitudinal patient record',
     shortLabel: 'Patient record & encounters',
-    description: 'Bring reports, scans, prescriptions, findings, referrals and facility visits into one patient profile, with a timeline of what happened, what was done and what comes next.',
+    description: 'Support patient identity, demographics and consent records alongside reports, scans, prescriptions, findings, referrals and facility visits in one profile, with a timeline of what happened, what was done and what comes next.',
     benefit: 'Give authorized care teams relevant context across visits.',
     icon: LayoutDashboard,
   },
@@ -37,7 +37,7 @@ export const features = [
   {
     title: 'Appointments, queues and visit access',
     shortLabel: 'Appointments & queues',
-    description: 'Coordinate appointment requests, registration, queues, reminders and visit status across a facility.',
+    description: 'Support provider discovery and facility-enabled appointment requests, then coordinate registration, queues, reminders and visit status.',
     benefit: 'Support the journey from finding or accessing a provider through check-in.',
     icon: Activity,
   },
@@ -121,7 +121,7 @@ export const features = [
   {
     title: 'Facility setup and administration',
     shortLabel: 'Facility administration',
-    description: 'Set up facilities, departments, staff access, workflow rules and onboarding.',
+    description: 'Configure facilities, departments, specialties, providers, locations and operating hours, alongside staff access, workflow rules and onboarding.',
     benefit: 'Adapt the platform to how each medical setup is organized.',
     icon: CalendarCheck2,
   },
@@ -221,3 +221,15 @@ export const serviceModelOptions = [
   'Need to define scope first',
   'Other',
 ]
+
+// Discovery choices only; these are not published prices or a commitment to charge.
+export const willingnessToPayOptions = [
+  'I would only use it if it were free',
+  '₹1,000–₹2,499 per month',
+  '₹2,500–₹4,999 per month',
+  '₹5,000–₹9,999 per month',
+  '₹10,000+ per month',
+  'Not sure yet',
+  'Other amount',
+] as const
+

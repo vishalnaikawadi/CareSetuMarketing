@@ -35,6 +35,7 @@ import {
   interestOptions,
   navigation,
   serviceModelOptions,
+  willingnessToPayOptions,
   roles,
   specialtyModules,
 } from './config/content'
@@ -51,6 +52,7 @@ const initialForm: WaitlistFormData = {
   serviceModels: [],
   serviceModelOther: '',
   willingnessToPay: '',
+  willingnessToPayOther: '',
   missingFeatures: '',
   generalFeedback: '',
   website: '',
@@ -413,7 +415,9 @@ function App() {
       featuresToExclude: selectedExcludedFeatures.join(' | '),
       serviceModels: selectedServiceModels.join(' | '),
       serviceModelOther: form.serviceModelOther.trim(),
-      willingnessToPay: form.willingnessToPay ?? '',
+      willingnessToPay: form.willingnessToPay === 'Other amount' && form.willingnessToPayOther.trim()
+        ? `Other amount: ${form.willingnessToPayOther.trim()}`
+        : form.willingnessToPay ?? '',
       missingFeatures: form.missingFeatures.trim(),
       generalFeedback: form.generalFeedback.trim(),
       website: form.website,
@@ -734,7 +738,7 @@ function App() {
                       <div className="form-heading"><span>3</span><div><h3>Service model and priorities</h3><p>Help us shape a model that fits real care settings.</p></div></div>
                       <fieldset className="mt-6"><legend className="field-label">What service models should we explore? <span className="optional">Optional · select all that apply</span></legend><p className="mt-1 text-sm font-normal text-slate-500">Packaging and pricing are undecided. Patients and caregivers can skip this.</p><div className="mt-3 flex flex-wrap gap-2">{serviceModelOptions.map((option) => { const selected = selectedServiceModels.includes(option); return <label key={option} className={`chip ${selected ? 'chip-selected' : ''}`}><input className="sr-only" type="checkbox" checked={selected} onChange={() => toggleServiceModel(option)} />{selected && <Check size={16} />}{option}</label> })}</div></fieldset>
                       {selectedServiceModels.includes('Other') && <label className="field-label mt-4">Another service model <span className="required">Required</span><input className="input" type="text" maxLength={300} value={form.serviceModelOther} onChange={(e) => update('serviceModelOther', e.target.value)} placeholder="Describe what would work for your organization" /></label>}
-                      <div className="mt-7"><label className="field-label" htmlFor="willingness-to-pay">If a pilot proves value, what amount might your organisation consider paying? <span className="optional">Optional</span></label><p className="mt-1 text-sm font-normal text-slate-500">Share a rough amount and pricing unit, if known. Pricing is undecided; patients and caregivers can skip this.</p><input id="willingness-to-pay" className="input" type="text" maxLength={180} value={form.willingnessToPay ?? ''} onChange={(e) => update('willingnessToPay', e.target.value)} placeholder="Amount and unit, or ‘not sure yet’" /></div>
+                      <fieldset className="mt-7"><legend className="field-label">If a pilot proved value, what range might your organisation consider paying per month? <span className="optional">Optional · choose one</span></legend><p className="mt-1 text-sm font-normal text-slate-500">These are discovery ranges, not published prices. Patients and caregivers can skip this.</p><div className="mt-3 grid gap-2 sm:grid-cols-2">{willingnessToPayOptions.map((option) => <label key={option} className={`choice ${form.willingnessToPay === option ? 'choice-selected' : ''}`}><input className="sr-only" type="radio" name="willingness-to-pay" value={option} checked={form.willingnessToPay === option} onChange={() => update('willingnessToPay', option)} /><span className="choice-dot" />{option}</label>)}</div>{form.willingnessToPay === 'Other amount' && <label className="field-label mt-4" htmlFor="willingness-to-pay-other">What amount and pricing unit? <span className="optional">Optional</span><input id="willingness-to-pay-other" className="input" type="text" maxLength={160} value={form.willingnessToPayOther} onChange={(e) => update('willingnessToPayOther', e.target.value)} placeholder="For example, per location or per clinician" /></label>}</fieldset>
                       <p className="mt-7 rounded-xl bg-teal-50 px-4 py-3 text-sm leading-6 text-slate-600">Please don’t include patient names, identifiers or clinical details in your feedback.</p>
                       <label className="field-label mt-5">Is there anything you’d want this product to do that isn’t mentioned here? <span className="optional">Optional</span><textarea className="input min-h-28 resize-y" maxLength={3000} value={form.missingFeatures} onChange={(e) => update('missingFeatures', e.target.value)} placeholder="A missing feature, workflow or integration…" /></label>
                       <label className="field-label mt-5">Any other thoughts, concerns or suggestions? <span className="optional">Optional</span><textarea className="input min-h-28 resize-y" maxLength={3000} value={form.generalFeedback} onChange={(e) => update('generalFeedback', e.target.value)} placeholder="Anything else you’d like us to know…" /></label>

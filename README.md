@@ -78,7 +78,7 @@ Restart the local development server after changing environment variables.
 ### 7. Test a submission
 
 1. Run `npm run dev` and open the local URL shown in the terminal.
-2. Provide an email, interest rating and at least one feature. Role, care setting and service model are multi-select; the service-model answer is optional unless **Other** is selected.
+2. Provide an email, interest rating and at least one useful feature. Role, care setting, useful features, excluded features and service models are multi-select. Interest and willingness-to-pay ranges are single-choice discovery questions; pricing is undecided. The willingness-to-pay answer is optional, with a separate optional amount field when **Other amount** is selected.
 3. Confirm the success screen appears.
 4. Open the `Responses` tab in Google Sheets and verify a new row was added with a server-generated timestamp.
 5. If no row appears, check that the tab is named `Responses`, the Sheet ID is correct, the latest script version is deployed, and Web App access is set to **Anyone**.
