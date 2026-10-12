@@ -1,6 +1,6 @@
-# CareSetu Marketing & Waitlist
+# Care Setu Marketing & Waitlist
 
-A responsive product-validation website for CareSetu, a consultation cockpit for hospital outpatient departments. It explains the product to doctors and other medical professionals, gathers feature and pricing signals, and sends waitlist responses to Google Sheets through Google Apps Script.
+A responsive product-validation website for Care Setu, a proposed configurable care and operations platform for hospitals, multispecialty centres, clinics and other medical organizations. It explains the concept to care teams and patients, gathers product-fit and service-model feedback, and sends waitlist responses to Google Sheets through Google Apps Script.
 
 ## Run locally
 
@@ -20,13 +20,13 @@ The form needs a deployed Google Apps Script endpoint before it can submit. Comp
 
 1. In Google Drive, create a blank Google Sheet.
 2. Rename it if you like, then create or rename the first tab to exactly `Responses`.
-3. In row 1, add these headers in order:
+3. In row 1, add these headers in order, or let `setupSheet` write them after you install the script:
 
 ```text
-Timestamp | Name | Email | Role | Interest Level | Features Selected | Most Valuable Feature | Willingness To Pay | Missing Features | General Feedback | Source | User Agent
+Timestamp | Name | Email | Role | Interest Level | Features Selected | Most Valuable Feature (legacy) | Willingness To Pay | Missing Features | General Feedback | Source (legacy) | User Agent (legacy) | Care Settings | Service Models to Explore | Features to Exclude
 ```
 
-You can also let the included script create the headers: after completing steps 2–5 below, select `setupSheet` in Apps Script and click **Run** once.
+After installing the script, run `setupSheet` to create or update the 15 headers. Existing response rows stay in place; the previous single-feature, source and browser columns remain legacy columns. New responses write the optional willingness-to-pay answer into its existing column and use the appended care-setting, service-model and feature-exclusion columns.
 
 ### 2. Copy the Sheet ID
 
@@ -44,11 +44,11 @@ Copy the text between `/d/` and `/edit`.
 2. Delete the starter function in `Code.gs`.
 3. Copy the contents of `google-apps-script/Code.gs` from this repository into the editor.
 4. Replace `REPLACE_WITH_YOUR_GOOGLE_SHEET_ID` with the ID copied above.
-5. Save the project and give it a name such as `CareSetu Waitlist`.
+5. Save the project and give it a name such as `Care Setu Waitlist`.
 
 ### 4. Authorize and verify the sheet
 
-1. Choose `setupSheet` from the function menu and click **Run**.
+1. Choose `setupSheet` from the function menu and click **Run**. Re-run it after updating the script so the response columns match the current survey.
 2. Google will ask you to authorize the script. Choose your account, review the permissions, and allow access to the Sheet.
 3. Return to the Sheet and confirm the `Responses` tab has the expected header row.
 
@@ -78,16 +78,16 @@ Restart the local development server after changing environment variables.
 ### 7. Test a submission
 
 1. Run `npm run dev` and open the local URL shown in the terminal.
-2. Complete every required field and submit the form.
+2. Provide an email, interest rating and at least one feature. Role, care setting and service model are multi-select; the service-model answer is optional unless **Other** is selected.
 3. Confirm the success screen appears.
 4. Open the `Responses` tab in Google Sheets and verify a new row was added with a server-generated timestamp.
 5. If no row appears, check that the tab is named `Responses`, the Sheet ID is correct, the latest script version is deployed, and Web App access is set to **Anyone**.
 
 ## Why the request uses `no-cors`
 
-Google Apps Script Web Apps redirect POST responses through a Google content domain that does not consistently provide browser CORS headers. The frontend therefore sends a simple URL-encoded POST using `no-cors`. Visitors stay on the CareSetu page and never see a Google Form. Because an opaque browser response cannot be inspected, the success screen means the request was dispatched successfully; confirm actual storage during setup by checking the Sheet.
+Google Apps Script Web Apps redirect POST responses through a Google content domain that does not consistently provide browser CORS headers. The frontend therefore sends a simple URL-encoded POST using `no-cors`. Visitors stay on the Care Setu page and never see a Google Form. Because an opaque browser response cannot be inspected, this page cannot confirm that the row was stored; verify the response sheet during setup and after the first live submission.
 
-Some browsers leave that opaque redirect pending even after Apps Script has stored the row. The form therefore uses a six-second safety window: immediate network failures still show an error, while a request that remains pending moves to the success screen instead of leaving the visitor stuck on “Submitting…”.
+Some browsers leave that opaque redirect pending even after Apps Script has stored the row. The form therefore uses a six-second safety window: immediate network failures show an error, while a request that remains pending moves to the thank-you screen so the visitor is not stuck on “Submitting…”. The screen asks the site owner to verify receipt because storage is not confirmed in-browser.
 
 Do not change the request to JSON with an `application/json` header unless you add a CORS-capable proxy. That would trigger a browser preflight that Apps Script Web Apps do not reliably handle.
 
@@ -95,11 +95,11 @@ Do not change the request to JSON with an `application/json` header unless you a
 
 The site includes a hidden honeypot, a 30-second client-side submission cooldown, disabled controls while sending, server-side required-field checks, input length limits, and a script lock to avoid simultaneous row collisions. This is appropriate for an early validation site, but it is not strong security. A public endpoint can still be discovered and called directly. Add stronger protection or a managed form service if abuse becomes a problem.
 
-The form intentionally does not collect IP addresses or patient information.
+New responses intentionally omit IP addresses, patient information, source URLs and browser user-agent strings. The sheet retains legacy source and user-agent columns for historical rows, but new submissions leave them blank. The form asks visitors not to include patient names, identifiers or clinical details in free-text feedback.
 
 ## Edit product content
 
-Most editable product copy, feature names, roles, navigation and pricing ranges live in `src/config/content.ts`. The pricing ranges are clearly marked there because they are validation assumptions, not settled prices.
+Most editable product copy, feature names, roles, care-setting options, navigation and service-model choices live in `src/config/content.ts`. Commercial packaging and prices remain undecided.
 
 ## Production build
 

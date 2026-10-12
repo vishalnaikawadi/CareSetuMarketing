@@ -18,29 +18,31 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#0891B2` | `--color-primary` |
+| Primary | `#0B7F79` | `--color-primary` |
 | On Primary | `#FFFFFF` | `--color-on-primary` |
-| Secondary | `#22D3EE` | `--color-secondary` |
-| Accent/CTA | `#059669` | `--color-accent` |
-| Background | `#ECFEFF` | `--color-background` |
-| Foreground | `#164E63` | `--color-foreground` |
-| Muted | `#E8F1F6` | `--color-muted` |
-| Border | `#A5F3FC` | `--color-border` |
+| Secondary | `#1EAAA1` | `--color-secondary` |
+| Structure | `#0C2235` | `--color-structure` |
+| Accent/CTA | `#0B7F79` | `--color-accent` |
+| Background | `#F3F7F7` | `--color-background` |
+| Foreground | `#102B3D` | `--color-foreground` |
+| Muted | `#EFF9F7` | `--color-muted` |
+| Border | `#DCE7E6` | `--color-border` |
 | Destructive | `#DC2626` | `--color-destructive` |
-| Ring | `#0891B2` | `--color-ring` |
+| Ring | `#087F79` | `--color-ring` |
 
-**Color Notes:** Calm cyan + health green
+**Color Notes:** Midnight navy anchors structure and hero areas. White and soft aqua keep product surfaces bright and calm; a restrained, accessible teal marks actions, active states and key details.
 
 ### Typography
 
-- **Heading Font:** Figtree
+- **Display Font:** DM Serif Display
+- **UI Heading Font:** Figtree
 - **Body Font:** Noto Sans
-- **Mood:** medical, clean, accessible, professional, healthcare, trustworthy
-- **Google Fonts:** [Figtree + Noto Sans](https://fonts.google.com/share?selection.family=Figtree:wght@300;400;500;600;700|Noto+Sans:wght@300;400;500;700)
+- **Mood:** premium, calm, readable, accountable and healthcare-appropriate
+- **Google Fonts:** DM Serif Display, Figtree and Noto Sans
 
 **CSS Import:**
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Figtree:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap');
 ```
 
 ### Spacing Variables
@@ -73,25 +75,24 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #059669;
+  background: #0B7F79;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
-  transition: all 200ms ease;
+  transition: background-color 200ms ease, box-shadow 200ms ease;
   cursor: pointer;
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background: #0C6864;
 }
 
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #0891B2;
-  border: 2px solid #0891B2;
+  color: #0B7F79;
+  border: 1px solid #0B7F79;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -104,17 +105,16 @@
 
 ```css
 .card {
-  background: #ECFEFF;
+  background: #FFFFFF;
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
-  transition: all 200ms ease;
-  cursor: pointer;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
 }
 
 .card:hover {
   box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  border-color: #BCE8E3;
 }
 ```
 
@@ -130,9 +130,9 @@
 }
 
 .input:focus {
-  border-color: #0891B2;
+  border-color: #087F79;
   outline: none;
-  box-shadow: 0 0 0 3px #0891B220;
+  box-shadow: 0 0 0 3px #087F7920;
 }
 ```
 
@@ -168,11 +168,11 @@
 
 ### Page Pattern
 
-**Pattern Name:** Minimal Single Column
+**Pattern Name:** Buyer-led product concept page
 
-- **Conversion Strategy:** Single CTA focus. Large typography. Lots of whitespace. No nav clutter. Mobile-first.
-- **CTA Placement:** Center, large CTA button
-- **Section Order:** 1. Hero headline, 2. Short description, 3. Benefit bullets (3 max), 4. CTA, 5. Footer
+- **Conversion Strategy:** Explain hospital value, patient and clinician experience, role-specific workflows, safety guardrails and pilot path with concise copy and illustrative product screens.
+- **CTA Placement:** Keep one primary discovery action visible in the hero and navigation; repeat it after the product and pilot explanation.
+- **Section Order:** 1. Hero and clinician mock screen, 2. Hospital value, 3. Audience and patient portal, 4. Connected-care diagram and product mock screens, 5. Specialty candidates, 6. Care workflow, 7. Pilot and commercial questions, 8. Discovery form, 9. Concept disclaimer.
 
 ---
 
@@ -204,6 +204,6 @@ Before delivering any UI code, verify:
 - [ ] Light mode: text contrast 4.5:1 minimum
 - [ ] Focus states visible for keyboard navigation
 - [ ] `prefers-reduced-motion` respected
-- [ ] Responsive: 375px, 768px, 1024px, 1440px
+- [ ] Responsive: 390px, 768px, 1024px, 1440px
 - [ ] No content hidden behind fixed navbars
 - [ ] No horizontal scroll on mobile

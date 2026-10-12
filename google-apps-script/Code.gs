@@ -1,10 +1,12 @@
 /**
- * CareSetu waitlist receiver for Google Apps Script.
+ * Care Setu waitlist receiver for Google Apps Script.
  * Set SHEET_ID, then deploy as a Web App accessible to anyone.
  */
 const SHEET_ID = 'REPLACE_WITH_YOUR_GOOGLE_SHEET_ID';
 const SHEET_NAME = 'Responses';
 
+// Keep the original columns in place so existing response rows remain aligned.
+// New submissions reuse the legacy willingness-to-pay column and use the appended columns.
 const HEADERS = [
   'Timestamp',
   'Name',
@@ -12,12 +14,15 @@ const HEADERS = [
   'Role',
   'Interest Level',
   'Features Selected',
-  'Most Valuable Feature',
+  'Most Valuable Feature (legacy)',
   'Willingness To Pay',
   'Missing Features',
   'General Feedback',
-  'Source',
-  'User Agent',
+  'Source (legacy)',
+  'User Agent (legacy)',
+  'Care Settings',
+  'Service Models to Explore',
+  'Features to Exclude',
 ];
 
 function doPost(e) {
@@ -36,19 +41,30 @@ function doPost(e) {
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
     try {
+      const serviceModels = clean_(data.serviceModels, 600)
+        .split(' | ')
+        .filter(Boolean)
+        .map((model) => model === 'Other' && clean_(data.serviceModelOther, 300)
+          ? 'Other: ' + clean_(data.serviceModelOther, 300)
+          : model)
+        .join(' | ');
+
       sheet.appendRow([
         new Date(),
         clean_(data.name, 120),
         clean_(data.email, 254).toLowerCase(),
-        clean_(data.role, 120),
+        clean_(data.role, 600),
         clean_(data.interestLevel, 80),
-        clean_(data.featuresSelected, 800),
-        clean_(data.mostValuableFeature, 160),
-        clean_(data.willingnessToPay, 160),
+        clean_(data.featuresSelected, 1200),
+        '', // Legacy single-feature field; the form now supports multi-select.
+        clean_(data.willingnessToPay, 180),
         clean_(data.missingFeatures, 3000),
         clean_(data.generalFeedback, 3000),
-        clean_(data.source, 500),
-        clean_(data.userAgent, 500),
+        '', // Source URLs are not collected for new responses.
+        '', // Browser user-agent strings are not collected for new responses.
+        clean_(data.careSettings, 600),
+        clean_(serviceModels, 600),
+        clean_(data.featuresToExclude, 1200),
       ]);
     } finally {
       lock.releaseLock();
@@ -62,21 +78,37 @@ function doPost(e) {
 }
 
 function doGet() {
-  return jsonResponse_({ ok: true, service: 'CareSetu waitlist' });
+  return jsonResponse_({ ok: true, service: 'Care Setu waitlist' });
 }
 
 function validateSubmission_(data) {
   const email = clean_(data.email, 254);
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'A valid email is required.';
-  if (!clean_(data.interestLevel, 80)) return 'Interest level is required.';
-  if (!clean_(data.featuresSelected, 800)) return 'At least one feature is required.';
-  if (!clean_(data.mostValuableFeature, 160)) return 'Most valuable feature is required.';
-  if (!clean_(data.willingnessToPay, 160)) return 'Willingness to pay is required.';
+
+  const interestLevel = clean_(data.interestLevel, 80);
+  const validInterestLevels = [
+    'Definitely interested',
+    'Probably interested',
+    'Maybe',
+    'Probably not',
+    'Not interested',
+  ];
+  if (validInterestLevels.indexOf(interestLevel) === -1) return 'A valid interest level is required.';
+  if (!clean_(data.featuresSelected, 1200)) return 'Select at least one feature.';
+
+  const serviceModels = clean_(data.serviceModels, 600).split(' | ');
+  if (serviceModels.indexOf('Other') !== -1 && !clean_(data.serviceModelOther, 300)) {
+    return 'Describe the other service model.';
+  }
+
   return '';
 }
 
 function clean_(value, maxLength) {
-  return String(value || '').trim().slice(0, maxLength);
+  let text = String(value || '').replace(/[\u0000-\u001F\u007F]/g, ' ').trim().slice(0, maxLength);
+  // Prevent user-entered feedback from being interpreted as a spreadsheet formula.
+  if (/^[=+\-@]/.test(text)) text = "'" + text;
+  return text;
 }
 
 function jsonResponse_(payload) {
@@ -85,11 +117,11 @@ function jsonResponse_(payload) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/** Run once if you want Apps Script to create/verify the header row. */
+/** Run after deployment to create the header row or append the new survey columns. */
 function setupSheet() {
   const spreadsheet = SpreadsheetApp.openById(SHEET_ID);
   let sheet = spreadsheet.getSheetByName(SHEET_NAME);
   if (!sheet) sheet = spreadsheet.insertSheet(SHEET_NAME);
-  if (sheet.getLastRow() === 0) sheet.appendRow(HEADERS);
+  sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
   sheet.setFrozenRows(1);
 }
