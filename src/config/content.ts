@@ -199,7 +199,8 @@ export const roles = [
   'Department head / administrator',
   'Lab / diagnostics team',
   'Pharmacy team',
-  'Patient / caregiver',
+  'Patient',
+  'Caregiver',
   'IT / integration team',
   'Other healthcare professional',
 ]
