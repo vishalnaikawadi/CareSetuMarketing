@@ -97,9 +97,14 @@ The site includes a hidden honeypot, a 30-second client-side submission cooldown
 
 New responses intentionally omit IP addresses, patient information, source URLs and browser user-agent strings. The sheet retains legacy source and user-agent columns for historical rows, but new submissions leave them blank. The form asks visitors not to include patient names, identifiers or clinical details in free-text feedback.
 
-## Edit product content
+## Edit content and design
 
-Most editable product copy, feature names, roles, care-setting options, navigation and service-model choices live in `src/config/content.ts`. Commercial packaging and prices remain undecided.
+**Read [`AGENTS.md`](AGENTS.md) before changing the site.** It lists the design rules, the waitlist form contract with the Google Sheet, and how to add features, mocks and sections. The visual system (colours, type, motif, section order) is documented in [`design-system/caresetu-marketing/MASTER.md`](design-system/caresetu-marketing/MASTER.md).
+
+- **Copy and options:** most editable copy, feature names, roles, care-setting options, navigation, FAQ, workflow steps and service-model choices live in `src/config/content.ts`. Each feature's `group` decides which audience section shows it.
+- **Feature `shortLabel` values are stored in the Sheet.** Renaming one splits historical data, so coordinate with whoever owns the Sheet.
+- **Layout** is in `src/App.tsx`, **product mocks** in `src/components/mocks.tsx`, **illustrations** in `src/components/illustrations.tsx`, and the **waitlist wizard** in `src/components/WaitlistWizard.tsx`.
+- Commercial packaging and prices remain undecided. Don't publish prices or launch dates.
 
 ## Production build
 
