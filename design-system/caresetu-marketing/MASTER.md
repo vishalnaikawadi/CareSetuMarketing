@@ -3,11 +3,16 @@
 > **LOGIC:** When building a specific page, first check `design-system/pages/[page-name].md`.
 > If that file exists, its rules **override** this Master file.
 > If not, strictly follow the rules below.
+>
+> **Contributor rules** (what not to change, the form contract, how to add features, mocks and sections) are in [`AGENTS.md`](../../AGENTS.md) at the repo root. Change a rule here only on purpose, and update `AGENTS.md` in the same commit.
+>
+> **Source of truth in code:** tokens are in `tailwind.config.js`, component classes in `src/styles.css`. If this file and the code disagree, fix whichever one is wrong. Don't leave them out of sync.
 
 ---
 
 **Project:** CareSetu Marketing
 **Generated:** 2026-10-01 17:05:37
+**Updated:** 2026-10-22 (warm & human redesign)
 **Category:** Healthcare App
 
 ---
@@ -16,34 +21,32 @@
 
 ### Color Palette
 
-| Role | Hex | CSS Variable |
-|------|-----|--------------|
-| Primary | `#0B7F79` | `--color-primary` |
-| On Primary | `#FFFFFF` | `--color-on-primary` |
-| Secondary | `#1EAAA1` | `--color-secondary` |
-| Structure | `#0C2235` | `--color-structure` |
-| Accent/CTA | `#0B7F79` | `--color-accent` |
-| Background | `#F3F7F7` | `--color-background` |
-| Foreground | `#102B3D` | `--color-foreground` |
-| Muted | `#EFF9F7` | `--color-muted` |
-| Border | `#DCE7E6` | `--color-border` |
-| Destructive | `#DC2626` | `--color-destructive` |
-| Ring | `#087F79` | `--color-ring` |
+| Role | Hex | Tailwind token |
+|------|-----|----------------|
+| Background (paper) | `#F2F4EE` | `paper` |
+| Surface | `#FFFFFF` | `white` |
+| Foreground | `#1E2B25` | `ink` |
+| Muted text | `#5B6B62` | `muted` |
+| Structure / primary | `#2F4A3E` | `forest` |
+| Sage tints | `#EEF2EB` – `#3E5A4B` | `sage-50` … `sage-700` |
+| Accent / CTA | `#B5563A` (hover `#9A4630`) | `clay-500` / `clay-600` |
+| Pending / caution | `#D9A23B` on `#F6E7C4` | `turmeric-*` |
+| Border | `#D8DFD3` | `line` |
+| Focus ring | `#B5563A`, 3px | — |
 
-**Color Notes:** Midnight navy anchors structure and hero areas. White and soft aqua keep product surfaces bright and calm; a restrained, accessible teal marks actions, active states and key details.
+**Color Notes:** Warm & human. Forest green carries structure, headings on dark sections and selected states. Brick terracotta is reserved for primary actions, focus rings and clinical flags, and never used as decoration. Paper is sage-tinted, not cream. Turmeric only marks pending or caution states inside product mocks.
 
 ### Typography
 
-- **Display Font:** DM Serif Display
-- **UI Heading Font:** Figtree
-- **Body Font:** Noto Sans
-- **Mood:** premium, calm, readable, accountable and healthcare-appropriate
-- **Google Fonts:** DM Serif Display, Figtree and Noto Sans
+- **Display Font:** Bricolage Grotesque (600, optical sizing on): headings and mock numerals
+- **Body Font:** Atkinson Hyperlegible Next (400/700): body, UI and forms; chosen for legibility
+- **Scale:** h1 2.6rem → 4.5rem, h2 1.9rem → 2.6rem, body 17px / 1.6, small 15px
+- **Rules:** sentence case everywhere; no uppercase eyebrow labels; no single-word colour or italic accents in headlines
+- **Loading:** `<link>` in `index.html` (Google Fonts)
 
-**CSS Import:**
-```css
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Figtree:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap');
-```
+### Motif
+
+*Setu* means bridge. The arch (logo, hero background, bridge network diagram) is the one recurring visual idea. Supporting illustrations are simple line drawings with flat sage/clay/turmeric fills: audience avatars and a cutting-chai glass.
 
 ### Spacing Variables
 
@@ -57,102 +60,28 @@
 | `--space-2xl` | `48px` / `3rem` | Section margins |
 | `--space-3xl` | `64px` / `4rem` | Hero padding |
 
-### Shadow Depths
+### Shadows and radii
 
-| Level | Value | Usage |
-|-------|-------|-------|
-| `--shadow-sm` | `0 1px 2px rgba(0,0,0,0.05)` | Subtle lift |
-| `--shadow-md` | `0 4px 6px rgba(0,0,0,0.1)` | Cards, buttons |
-| `--shadow-lg` | `0 10px 15px rgba(0,0,0,0.1)` | Modals, dropdowns |
-| `--shadow-xl` | `0 20px 25px rgba(0,0,0,0.15)` | Hero images, featured cards |
+- `shadow-lift` only on the hero mock and patient phone; `shadow-tag` for small pills. Other surfaces use borders, not shadows.
+- Radii follow hierarchy: buttons and chips are pills; product mock windows 18px; tiles inside mocks 10px; large panels (form, specialties) 28px.
 
----
+### Product mocks
 
-## Component Specs
+Seven fictional screens, all in `src/components/mocks.tsx`. Keep them all unless the product changes.
 
-### Buttons
+| Mock | Section | Notes |
+|------|---------|-------|
+| `ChartAssistantMock` | Hero | Interactive; prompts and answers come from `assistantPrompts` in `content.ts`. The only mock with `shadow-lift` besides the phone. |
+| `RecordTimelineMock` + `LabTrendsMock` | For care teams | Stacked in the right column; they scroll normally. |
+| `SharedReportsMock` | Full-width block after care teams | Patient app and clinician panel side by side. |
+| `PatientPortalMock` | For patients | Phone frame, 460px wide, sticky. |
+| `HospitalOverviewMock` + `FacilityRolesMock` | For hospitals | Stacked in the right column. |
 
-```css
-/* Primary Button */
-.btn-primary {
-  background: #0B7F79;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: background-color 200ms ease, box-shadow 200ms ease;
-  cursor: pointer;
-}
+Every mock: a `.mock` window, a `MockBar` showing "Fictional data", `.mock-tile` inner surfaces, text no smaller than `text-xs`, an `aria-label` on the `<figure>`, and decorative buttons rendered as `<span>`.
 
-.btn-primary:hover {
-  background: #0C6864;
-}
+### Components
 
-/* Secondary Button */
-.btn-secondary {
-  background: transparent;
-  color: #0B7F79;
-  border: 1px solid #0B7F79;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 200ms ease;
-  cursor: pointer;
-}
-```
-
-### Cards
-
-```css
-.card {
-  background: #FFFFFF;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: var(--shadow-md);
-  transition: border-color 200ms ease, box-shadow 200ms ease;
-}
-
-.card:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: #BCE8E3;
-}
-```
-
-### Inputs
-
-```css
-.input {
-  padding: 12px 16px;
-  border: 1px solid #E2E8F0;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 200ms ease;
-}
-
-.input:focus {
-  border-color: #087F79;
-  outline: none;
-  box-shadow: 0 0 0 3px #087F7920;
-}
-```
-
-### Modals
-
-```css
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-}
-
-.modal {
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: var(--shadow-xl);
-  max-width: 500px;
-  width: 90%;
-}
-```
+Defined in `src/styles.css`: `.btn-primary` (clay pill), `.btn-quiet` (forest outline pill), `.path-pill` (audience label with avatar), `.mock` / `.mock-bar` / `.mock-tile`, `.input`, `.choice`, `.chip` (selected = forest fill; exclude = clay tint).
 
 ---
 
@@ -168,11 +97,11 @@
 
 ### Page Pattern
 
-**Pattern Name:** Buyer-led product concept page
+**Pattern Name:** Two-audience product concept page (buyers and the people who use it)
 
-- **Conversion Strategy:** Explain hospital value, patient and clinician experience, role-specific workflows, safety guardrails and pilot path with concise copy and illustrative product screens.
-- **CTA Placement:** Keep one primary discovery action visible in the hero and navigation; repeat it after the product and pilot explanation.
-- **Section Order:** 1. Hero and clinician mock screen, 2. Hospital value, 3. Audience and patient portal, 4. Connected-care diagram and product mock screens, 5. Specialty candidates, 6. Care workflow, 7. Pilot and commercial questions, 8. Discovery form, 9. Concept disclaimer.
+- **Conversion Strategy:** One action, "Join the waitlist", in the nav, hero and the form section. Features are grouped by who they serve, so buyers and clinicians/patients each find their path.
+- **Section Order:** 1. Hero + interactive chart-assistant mock, 2. Bridge network + hospital value and pilot measures, 3. For care teams, then the full-width shared reports block, 4. For patients and caregivers, 5. For hospitals (+ care settings), 6. Specialty candidates, 7. Care workflow (6 steps), 8. Pilot: roadmap, guardrails, pricing models, 9. Waitlist wizard (3 steps), 10. FAQ (holds the AI, OCR, QR and guideline caveats), 11. Footer disclaimer.
+- **Motion:** only the hero arch drawing in on load, plus responses to user actions (assistant answers, FAQ, wizard steps).
 
 ---
 
@@ -207,3 +136,9 @@ Before delivering any UI code, verify:
 - [ ] Responsive: 390px, 768px, 1024px, 1440px
 - [ ] No content hidden behind fixed navbars
 - [ ] No horizontal scroll on mobile
+- [ ] Only design tokens are used: no raw hex in class names, no `slate`/`gray`/`teal` defaults
+- [ ] Clay is used only for actions, focus, errors and flags
+- [ ] No uppercase eyebrow labels, monospace labels or new fonts
+- [ ] Page wrapper still uses `overflow-x-clip` (sticky panels depend on it)
+- [ ] Mocks show fictional data and say so
+- [ ] `npm run build` passes
